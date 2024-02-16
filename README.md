@@ -1,6 +1,4 @@
-Creating a README for your project is crucial for explaining its purpose, functionality, and how others can use or contribute to it. Here's a template for your NFT minting service project that you can customize further as needed:
 
-```markdown
 # NFT Minting Service
 
 This project provides a simple Express-based web service for minting NFTs on the Ethereum blockchain. It utilizes the [ethers.js](https://github.com/ethers-io/ethers.js/) library to interact with the Ethereum network, allowing users to mint NFTs by sending a POST request to the service.
@@ -25,11 +23,11 @@ To install the NFT Minting Service, follow these steps:
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/yourusername/nft-minting-service.git
+   git clone https://github.com/Hogwarts-Inc/comic-node
    ```
 2. Navigate to the project directory:
    ```bash
-   cd nft-minting-service
+   cd comic-node
    ```
 3. Install the required npm packages:
    ```bash
@@ -73,9 +71,7 @@ Replace `<Recipient_Address>` with the Ethereum address to receive the NFT, and 
 Example using `curl`:
 
 ```bash
-curl -X POST http://localhost:4000/mint \
--H "Content-Type: application/json" \
--d '{"address": "0x...", "URI": "ipfs://..."}'
+curl -X POST http://localhost:4000/mint -H "Content-Type: application/json" -d '{"address": "0x...", "URI": "ipfs://..."}'
 ```
 
 ## Contributing
@@ -91,13 +87,3 @@ Contributions to the NFT Minting Service are welcome. To contribute:
 ## License
 
 This project is licensed under the MIT License - see the LICENSE file for details.
-```
-
-### Customization
-
-- **GitHub URL:** Replace `https://github.com/yourusername/nft-minting-service.git` with the actual URL of your GitHub repository.
-- **Environment Variables:** Make sure to guide users on how to get their QuickNode HTTP endpoint and Ethereum wallet private key, or link to resources that can help with that.
-- **Contributing:** If you have specific contribution guidelines, you might want to detail them in a separate `CONTRIBUTING.md` file and reference it here.
-- **License:** If you choose a different license, update the License section accordingly, and ensure you include the actual license file in your repository.
-
-This template provides a basic structure for your README. Depending on your project's complexity and scope, you might want to include additional sections like `API Reference`, `Technology Stack`, `Project Structure`, or `Acknowledgments`.
