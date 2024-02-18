@@ -29,7 +29,7 @@ async function mintNFT(address, URI) {
       const contractWithSigner = contractInstance.connect(wallet);
       const txn = await contractWithSigner.mintNFT(address, URI, { gasPrice: gasFee });
 
-      console.log("...Submitting transaction with gas price of:", ethers.utils.formatUnits(gasFee, "gwei"));
+      console.log("...Submitting mint transaction with gas price of:", ethers.utils.formatUnits(gasFee, "gwei"));
       let receipt = await txn.wait();
       let tokenID = receipt.events[0].args.tokenId.toString();
 
@@ -43,6 +43,24 @@ async function mintNFT(address, URI) {
     } catch (e) {
         console.log("Error Caught in Catch Statement: ", e);
         throw e;
+    }
+}
+
+async function transferNFT(fromAddress, toAddress, tokenId) {
+  try {
+      const gasFee = await getGasPrice();
+      const contractWithSigner = contractInstance.connect(wallet);
+
+      const txn = await contractWithSigner.transferFrom(fromAddress, toAddress, tokenId, { gasPrice: gasFee });
+
+      console.log("...Submitting transfer transaction with gas price of:", ethers.utils.formatUnits(gasFee, "gwei"));
+      let receipt = await txn.wait();
+
+      console.log("Transfer is successful!!!" + '\n' + "Transaction Hash:", txn.hash + '\n' + "Navigate to https://mumbai.polygonscan.com/tx/" + txn.hash, "to see your transaction");
+      return { txn_hash: txn.hash }; 
+    } catch (e) {
+      console.log("Error Caught in Catch Statement: ", e);
+      throw e;
     }
 }
 
@@ -61,6 +79,24 @@ app.post('/mint', async (req, res) => {
   } catch (error) {
     console.error(error);
     res.status(500).send({ error: 'Error minting NFT.', details: error.message });
+  }
+});
+
+app.post('/transfer', async (req, res) => {
+  const { fromAddress, toAddress, tokenId } = req.body;
+  if (!fromAddress || !toAddress || !tokenId) {
+    return res.status(400).send('From address, to address, and token ID are required.');
+  }
+  try {
+    const transferResult = await transferNFT(fromAddress, toAddress, tokenId);
+    if (transferResult) {
+      res.send({ message: 'NFT transfer transaction submitted.', ...transferResult });
+    } else {
+      res.status(500).send('Error transferring NFT, but no details provided.');
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).send({ error: 'Error transferring NFT.', details: error.message });
   }
 });
 
