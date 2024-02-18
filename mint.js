@@ -25,23 +25,25 @@ async function getGasPrice() {
 
 async function mintNFT(address, URI) {
   try {
-    const gasFee = await getGasPrice();
-    const contractWithSigner = contractInstance.connect(wallet);
-    const txn = await contractWithSigner.mintNFT(address, URI, { gasPrice: gasFee });
+      const gasFee = await getGasPrice();
+      const contractWithSigner = contractInstance.connect(wallet);
+      const txn = await contractWithSigner.mintNFT(address, URI, { gasPrice: gasFee });
 
-    console.log("...Submitting transaction with gas price of:", ethers.utils.formatUnits(gasFee, "gwei"));
-    let receipt = await txn.wait();
-    if (receipt) {
-      console.log("Transaction is successful!!!" + '\n' + "Transaction Hash:", txn.hash + '\n' + "Block Number: " + receipt.blockNumber + '\n' + "Navigate to https://polygonscan.com/tx/" + txn.hash, "to see your transaction");
-      return txn.hash; 
-    } else {
-      console.log("Error submitting transaction");
-      return null;
+      console.log("...Submitting transaction with gas price of:", ethers.utils.formatUnits(gasFee, "gwei"));
+      let receipt = await txn.wait();
+      let tokenID = receipt.events[0].args.tokenId.toString();
+
+      if (tokenID) {
+        console.log("Transaction is successful!!!" + '\n' + "Transaction Hash:", txn.hash + '\n' + "Token ID:", tokenID + '\n' + "Navigate to https://mumbai.polygonscan.com/tx/" + txn.hash, "to see your transaction");
+        return { txn_hash: txn.hash, token_id: tokenID }; 
+      } else {
+        console.log("Error submitting transaction");
+        return null;
+      }
+    } catch (e) {
+        console.log("Error Caught in Catch Statement: ", e);
+        throw e;
     }
-  } catch (e) {
-    console.log("Error Caught in Catch Statement: ", e);
-    throw e; 
-  }
 }
 
 app.post('/mint', async (req, res) => {
@@ -50,9 +52,9 @@ app.post('/mint', async (req, res) => {
     return res.status(400).send('Address and URI are required.');
   }
   try {
-    const txnHash = await mintNFT(address, URI);
-    if (txnHash) {
-      res.send({ message: 'NFT minting transaction submitted.', txnHash: txnHash });
+    const mintResult = await mintNFT(address, URI);
+    if (mintResult) {
+      res.send({ message: 'NFT minting transaction submitted.', ...mintResult });
     } else {
       res.status(500).send('Error minting NFT, but no details provided.');
     }
