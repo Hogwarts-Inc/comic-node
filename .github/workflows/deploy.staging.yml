@@ -1,0 +1,27 @@
+name: Deploy
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-deploy:
+    runs-on:
+      labels: staging
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v2
+
+      - name: Copy .env
+        run: |
+          cp ~/nft/.env .env
+
+      - name: Clean images
+        run: |
+          docker system prune -f
+
+      - name: Build Docker Image
+        run: |
+          docker build -t docker-nft-staging:latest .

@@ -4,7 +4,10 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js"
+    "start": "node index.js",
+    "run-docker": "docker compose down && docker compose up",
+    "run-build-docker": "docker compose down && docker compose up --build",
+    "copy-env-to-server": "scp .env opc@164.152.19.10:~/nft/.env"
   },
   "keywords": [],
   "author": "",
